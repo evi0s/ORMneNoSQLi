@@ -1,0 +1,16 @@
+{
+  "name": "ORMneNoSQLi",
+  "version": "1.0.0",
+  "description": "ORM ne No SQLi!",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/evi0s/ORMneNoSQLi",
+  "author": "evi0s",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^3.6.3"
+  }
+}
