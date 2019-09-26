@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/user/<%= username %>">Profile</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="#" id="logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <div class="page-header">
+        <h1>Hello, <%= username %>.</h1>
+    </div>
+    <div class="page-body">
+        <div class="alert alert-danger fade in" id="alertError" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="errorMessage"></p>
+        </div>
+        <div class="alert alert-success fade in" id="alertInfo" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="infoMessage"></p>
+        </div>
+        <h2>
+            Welcome, to modify your profile, please click <a href="/user/<%= username %>">profile</a>
+        </h2>
+        <h3>
+            Notice that you can only save your profile for once.
+        </h3>
+
+    </div>
+
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    function cutdown() {
+        let i = 3;
+        $('#infoMessage').text(`Logout success! Redirecting in ${i} seconds...`);
+        setInterval(() => {
+            i = i - 1;
+            if (i === 0) {
+                $(window).attr('location','/auth/login');
+            }
+            $('#infoMessage').text(`Logout success! Redirecting in ${i} seconds...`);
+        }, 1000);
+    }
+
+    (() => {
+        $('#logout').click(() => {
+            $.ajax({
+                url: '/auth/logout',
+                method: 'delete',
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (!res) {
+                        cutdown();
+                        alertInfo.fadeIn();
+                        return;
+                    }
+
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+
+                },
+                error: (XMLHttpRequest) => {
+                    console.log(XMLHttpRequest.status);
+                    $('#errorMessage').text('Internal Server Error!');
+                    $('#alertError').fadeIn();
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>
