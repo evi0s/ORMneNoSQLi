@@ -6,6 +6,9 @@ const sequelize = new Sequelize(dbbase, dbuser, dbpass, {
     host: dbhost,
     port: dbport,
     dialect: 'mariadb',
+    dialectOptions: {
+        timezone: 'Etc/GMT+8',
+    },
     logging: console.log,
 });
 

@@ -24,6 +24,7 @@ async function login(ctx: RouterContext): Promise<any> {
 
     if (result.message === "Login Success!") {
         ctx.session.username = result.username;
+        ctx.session.id = result.id;
         ctx.status = 200;
         return;
     }

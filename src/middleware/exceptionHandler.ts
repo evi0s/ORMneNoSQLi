@@ -11,7 +11,10 @@ async function exceptionHandler(ctx: Context, next: Function) {
             ? 'Internal Server Error'
             : err.message;
 
-        ctx.body = { error };
+        await ctx.render('error', {
+            errorCode: status,
+            errorMessage: error
+        });
         ctx.status = status;
         return;
     }

@@ -24,7 +24,7 @@
                 <li><a href="/user/<%= username %>">Profile</a></li>
                 <li><a href="/search">Search</a></li>
                 <% if (username === 'admin') { %>
-                <li><a href="/admin">Admin</a></li>
+                    <li><a href="/admin">Admin</a></li>
                 <% } %>
                 <li><a href="#" id="logout">Logout</a></li>
             </ul>
@@ -34,7 +34,11 @@
 <div class="container">
 
     <div class="page-header">
-        <h1>Hello, <%= username %>.</h1>
+        <% if (isSearch) { %>
+        <h1>Search your stuff</h1>
+        <% } else { %>
+        <h1>Search Result</h1>
+        <% } %>
     </div>
     <div class="page-body">
         <div class="alert alert-danger fade in" id="alertError" style="display: none">
@@ -49,17 +53,62 @@
             </button>
             <p id="infoMessage"></p>
         </div>
-        <h2>
-            Welcome, to see your profile, please click <a href="/user/<%= username %>">profile</a>.
-        </h2>
-        <h3>Notice that you can only save your profile for only once.</h3>
-
+        <% if (isSearch) { %>
+        <form action='/search' method="get">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="key">Key</label>
+                        <input type="text" name="key" class="form-control" id="key" aria-describedby="key" placeholder="Enter Key" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="value">Value</label>
+                        <input type="text" name="value" class="form-control" id="value" aria-describedby="value" placeholder="Enter Value" required>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+        </form>
+        <% } else if (hasRecord) { %>
+        <div class="alert alert-success fade in" id="alertInfo">
+            <p>Record Exist!</p>
+        </div>
+        <form action="/search">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="key">Key</label>
+                        <input type="text" class="form-control disabled" id="key" aria-describedby="key" placeholder="<%= Object.keys(data)[0] %>" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="value">Value</label>
+                        <input type="text" class="form-control disabled" id="value" aria-describedby="value" placeholder="<%= Object.values(data)[0] %>" readonly>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Back</button>
+        </form>
+        <% } else { %>
+        <div class="alert alert-danger fade in" id="alertInfo">
+            <p>No Such Record!</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="back()">Back</button>
+        <% } %>
     </div>
 
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+    function back() {
+        console.log("Getting back...");
+        $(window).attr('location','/search');
+    }
+
     function cutdown() {
         let i = 3;
         $('#infoMessage').text(`Logout success! Redirecting in ${i} seconds...`);
@@ -73,6 +122,29 @@
     }
 
     (() => {
+        $('#search').click(() => {
+            $.ajax({
+                url: '/search',
+                method: 'get',
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (!res) {
+                        cutdown();
+                        alertInfo.fadeIn();
+                        return;
+                    }
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+                }
+            });
+        });
+
         $('#logout').click(() => {
             $.ajax({
                 url: '/auth/logout',

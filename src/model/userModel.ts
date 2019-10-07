@@ -5,6 +5,7 @@ import { sequelize } from "../store";
 class User extends Model {
     id: number;
     username: string;
+    data: any;
 }
 
 User.init({

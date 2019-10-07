@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/user/<%= username %>">Profile</a></li>
+                <li><a href="/search">Search</a></li>
+                <% if (username === 'admin') { %>
+                    <li><a href="/admin">Admin</a></li>
+                <% } %>
+                <li><a href="#" id="logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <div class="page-header">
+        <h1><%= username %>'s Profile</h1>
+    </div>
+    <div class="page-body">
+        <div class="alert alert-danger fade in" id="alertError" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="errorMessage"></p>
+        </div>
+        <div class="alert alert-success fade in" id="alertInfo" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="infoMessage"></p>
+        </div>
+        <h3 id="bannerMessage"></h3>
+        <hr/>
+        <% if (isNew) { %>
+        <form class="form-inline">
+            <div id="newProfile">
+                <div class="row" id="row-1">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="key">Key</label>
+                            <input type="text" name="key" class="form-control" id="key-1" aria-describedby="key" placeholder="Enter Key" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="value">Value</label>
+                            <input type="text" name="value" class="form-control" id="value-1" aria-describedby="value" placeholder="Enter Value" required>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success" id="addField">+</button>
+            <hr/>
+            <button type="button" class="btn btn-primary" id="submit">Submit</button>
+        </form>
+        <% } else { %>
+        <form id="showProfile"></form>
+        <% } %>
+
+
+    </div>
+
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    let data = <%- data %>;
+
+    function renderProfile(data) {
+        for (let key in data) {
+            $('#showProfile').append('<div class="row">\n' +
+                '                 <div class="col-md-6">\n' +
+                '                     <div class="form-group">\n' +
+                '                         <label for="key">Key</label>\n' +
+                '                         <input type="text" class="form-control disabled" aria-describedby="key" placeholder="' + key + '" readonly>\n' +
+                '                     </div>\n' +
+                '                 </div>\n' +
+                '                 <div class="col-md-6">\n' +
+                '                     <div class="form-group">\n' +
+                '                         <label for="value">Value</label>\n' +
+                '                         <input type="text" class="form-control disabled" aria-describedby="value" placeholder="' + data[key] + '" readonly>\n' +
+                '                     </div>\n' +
+                '                 </div>\n' +
+                '             </div>');
+        }
+    }
+
+    let fieldCount = 1;
+
+    function addField() {
+        fieldCount += 1;
+        $('#newProfile').append('<div class="row" id="row-' + fieldCount + '">\n' +
+            '                    <div class="col-md-3">\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label for="key">Key</label>\n' +
+            '                            <input type="text" name="key" class="form-control mb-6" id="key-' + fieldCount + '" aria-describedby="key" placeholder="Enter Key" required>\n' +
+            '                        </div>\n' +
+            '                    </div>\n' +
+            '                    <div class="col-md-3">\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label for="value">Value</label>\n' +
+            '                            <input type="text" name="value" class="form-control mb-5" id="value-' + fieldCount + '" aria-describedby="value" placeholder="Enter Value" required>\n' +
+            '                        </div>\n' +
+            '                    </div>\n' +
+            '                   <div class="col-md-1">\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label></label>\n' +
+            '                            <button type="button" class="btn btn-danger" id="del-' + fieldCount + '" onclick="deleteField(' + fieldCount + ')">&times;</button>\n' +
+            '                        </div>\n' +
+            '                    </div>\n' +
+            '                    <hr/>\n' +
+            '                </div>\n');
+    }
+
+    function deleteField(id) {
+        $('#row-' + id).remove();
+    }
+
+    function htmlEncode(value){
+        return value.replace(/[<>&"]/g, (c) => {
+            return {
+                '<':'&lt;',
+                '>':'&gt;',
+                '&':'&amp;',
+                '"':'&quot;'
+            } [c];
+        });
+    }
+
+    if (Object.keys(data).length === 0) {
+        $('#bannerMessage').text("Store some stuff for yourself?");
+    } else {
+        $('#bannerMessage').text("Here is your stuff...");
+        renderProfile(data);
+    }
+</script>
+<script>
+    function cutdown(message, location, timer) {
+
+        if (!message) {
+            message = 'Logout success!';
+        }
+
+        if (!location) {
+            location = '/auth/login';
+        }
+
+        if (!timer) {
+            timer = 3;
+        }
+
+        let i = timer;
+        $('#infoMessage').text(`${message} Redirecting in ${i} seconds...`);
+        setInterval(() => {
+            i = i - 1;
+            if (i === 0) {
+                $(window).attr('location', location);
+            }
+            $('#infoMessage').text(`${message} Redirecting in ${i} seconds...`);
+        }, 1000);
+    }
+
+    (() => {
+        $('#addField').click(() => {
+            addField();
+        });
+
+        $('#submit').click(() => {
+            let keys = [];
+            let values = [];
+            for (let i = 1; i <= fieldCount; i++) {
+                if ($('#row-' + i).length) {
+                    keys.push(htmlEncode($('#key-' + i).val()))
+                    values.push(htmlEncode($('#value-' + i).val()))
+                }
+            }
+            console.log(keys);
+            console.log(values);
+            let object = "";
+            object += "{";
+            for (let i = 0; i < keys.length - 1; i++) {
+                object += '"' + keys[i] + '": "' + values[i] + '", ';
+            }
+            object += '"' + keys[keys.length - 1] + '": "' + values[values.length - 1] + '"}';
+            console.log(object);
+            let postProfile = JSON.parse(object);
+            console.log(postProfile);
+
+            $.ajax({
+                url: '/user/<%= encodeURIComponent(username) %>',
+                method: 'patch',
+                data: {
+                    data: postProfile
+                },
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (res) {
+                        cutdown('Profile Saved!', '/user/<%= encodeURIComponent(username) %>');
+                        alertInfo.fadeIn();
+                        return;
+                    }
+
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+                },
+                error: (XMLHttpRequest) => {
+                    console.log(XMLHttpRequest.status);
+                    if (XMLHttpRequest.status === 422) {
+                        $('#errorMessage').text('Invalid Form Content!');
+                        $('#alertError').fadeIn();
+                        return;
+                    }
+                    $('#errorMessage').text('Internal Server Error!');
+                    $('#alertError').fadeIn();
+                }
+            });
+
+        });
+
+        $('#logout').click(() => {
+            $.ajax({
+                url: '/auth/logout',
+                method: 'delete',
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (!res) {
+                        cutdown();
+                        alertInfo.fadeIn();
+                        return;
+                    }
+
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+                },
+                error: (XMLHttpRequest) => {
+                    console.log(XMLHttpRequest.status);
+                    $('#errorMessage').text('Internal Server Error!');
+                    $('#alertError').fadeIn();
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

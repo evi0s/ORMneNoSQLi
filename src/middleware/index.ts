@@ -1,4 +1,4 @@
-import { exceptionHandler } from "./exception_handler"
+import { exceptionHandler } from "./exceptionHandler"
 import { Auth } from "./auth"
 
 export {

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/admin">Admin</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/admin/manage">Manage</a></li>
+                <li><a href="/admin/query">Query</a></li>
+                <li><a href="#" id="logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <div class="page-header">
+        <h1>Query User</h1>
+    </div>
+    <div class="page-body">
+        <div class="alert alert-danger fade in" id="alertError" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="errorMessage"></p>
+        </div>
+        <div class="alert alert-success fade in" id="alertInfo" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <p id="infoMessage"></p>
+        </div>
+        <% if (isQuery) { %>
+        <form>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="username" name="username" id="queryUsername" class="form-control" placeholder="Enter username">
+            </div>
+            <button type="button" class="btn btn-primary" id="query">Query</button>
+        </form>
+        <% } else if (hasRecord) { %>
+        <form id="showProfile">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" placeholder="<%= username %>" readonly>
+            </div>
+            <div class="form-group">
+                <label for="userid">UserID</label>
+                <input type="text" class="form-control" placeholder="<%= id %>" readonly>
+            </div>
+            <hr/>
+        </form>
+        <button type="button" class="btn btn-primary" id="submitNewData">Submit</button>
+        <% } else { %>
+        <div class="alert alert-danger fade in" id="alertInfo">
+            <p>No Such User!</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="back()">Back</button>
+        <% } %>
+
+    </div>
+
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+    let data = <%- data %>;
+
+    function back() {
+        console.log("Getting back...");
+        $(window).attr('location','/admin/manage');
+    }
+
+    if (Object.keys(data).length !== 0) {
+        $('#showProfile').append('<div class="form-group">\n' +
+            '                <label for="userdata">UserData</label>\n' +
+            '                <input type="text" class="form-control" id="userData" placeholder="" readonly>\n' +
+            '            </div>\n' +
+            '            <div class="form-group">\n' +
+            '                <label for="newuserdata">New Data</label>\n' +
+            '                <input type="text" class="form-control" placeholder="New Data..." id="newUserData">\n' +
+            '            </div>');
+        $('#userData').val(JSON.stringify(data));
+    } else {
+        $('#showProfile').append('<div class="alert alert-warning fade in">\n' +
+            '            <p>This user has no content!</p>\n' +
+            '        </div>\n' +
+            '            <div class="form-group">\n' +
+            '                <label for="newuserdata">New Data</label>\n' +
+            '                <input type="text" class="form-control" placeholder="New Data..." id="newUserData">\n' +
+            '            </div>')
+    }
+</script>
+<script>
+    function cutdown(message, location, timer) {
+
+        if (!message) {
+            message = 'Logout success!';
+        }
+
+        if (!location) {
+            location = '/auth/login';
+        }
+
+        if (!timer) {
+            timer = 3;
+        }
+
+        let i = timer;
+        $('#infoMessage').text(`${message} Redirecting in ${i} seconds...`);
+        setInterval(() => {
+            i = i - 1;
+            if (i === 0) {
+                $(window).attr('location', location);
+            }
+            $('#infoMessage').text(`${message} Redirecting in ${i} seconds...`);
+        }, 1000);
+    }
+
+    (() => {
+        $('#query').click(() => {
+            $(window).attr('location', '/admin/manage/' + encodeURIComponent($('#queryUsername').val()));
+        });
+
+        $('#submitNewData').click(() => {
+            $.ajax({
+                url: '/admin/manage/<%= encodeURIComponent(username) %>',
+                method: 'patch',
+                data: {
+                    data: $('#newUserData').val()
+                },
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (res) {
+                        cutdown('Profile Modified!', '/admin/manage/<%= encodeURIComponent(username) %>');
+                        alertInfo.fadeIn();
+                        return;
+                    }
+
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+                },
+                error: (XMLHttpRequest) => {
+                    console.log(XMLHttpRequest.status);
+                    if (XMLHttpRequest.status === 422) {
+                        $('#errorMessage').text('Invalid Form Content!');
+                        $('#alertError').fadeIn();
+                        return;
+                    }
+                    $('#errorMessage').text('Internal Server Error!');
+                    $('#alertError').fadeIn();
+                }
+            });
+        });
+
+        $('#logout').click(() => {
+            $.ajax({
+                url: '/auth/logout',
+                method: 'delete',
+                success: (res) => {
+                    console.log(res);
+                    let alertError = $('#alertError');
+                    let alertInfo = $('#alertInfo');
+                    alertError.hide();
+                    alertInfo.hide();
+
+                    if (!res) {
+                        cutdown();
+                        alertInfo.fadeIn();
+                        return;
+                    }
+
+                    console.log(res.error);
+                    $('#errorMessage').text(res.error);
+                    alertError.fadeIn();
+                },
+                error: (XMLHttpRequest) => {
+                    console.log(XMLHttpRequest.status);
+                    $('#errorMessage').text('Internal Server Error!');
+                    $('#alertError').fadeIn();
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

@@ -13,7 +13,8 @@ import { exceptionHandler } from "./middleware"
 import {
     indexRouter,
     adminRouter,
-    authRouter
+    authRouter,
+    userRouter
 } from './route'
 
 
@@ -38,7 +39,8 @@ app.use(indexRouter.routes());
 app.use(indexRouter.allowedMethods());
 app.use(adminRouter.routes());
 app.use(adminRouter.allowedMethods());
-
+app.use(userRouter.routes());
+app.use(userRouter.allowedMethods());
 
 app.listen(config.listenport, () => {
     console.log(`Application is running on port: ${config.listenport}`);

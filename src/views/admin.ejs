@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home</title>
+    <title>Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -17,15 +17,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Home</a>
+            <a class="navbar-brand" href="/admin">Admin</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/user/<%= username %>">Profile</a></li>
-                <li><a href="/search">Search</a></li>
-                <% if (username === 'admin') { %>
-                <li><a href="/admin">Admin</a></li>
-                <% } %>
+                <li><a href="/admin/manage">Manage</a></li>
+                <li><a href="/admin/query">Query</a></li>
                 <li><a href="#" id="logout">Logout</a></li>
             </ul>
         </div>
@@ -34,7 +31,7 @@
 <div class="container">
 
     <div class="page-header">
-        <h1>Hello, <%= username %>.</h1>
+        <h1>Hello, Super Administrator.</h1>
     </div>
     <div class="page-body">
         <div class="alert alert-danger fade in" id="alertError" style="display: none">
@@ -50,9 +47,8 @@
             <p id="infoMessage"></p>
         </div>
         <h2>
-            Welcome, to see your profile, please click <a href="/user/<%= username %>">profile</a>.
+            Welcome, to manage platform, please click <a href="/admin/manage">manage</a>.
         </h2>
-        <h3>Notice that you can only save your profile for only once.</h3>
 
     </div>
 

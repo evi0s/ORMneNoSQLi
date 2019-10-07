@@ -12,8 +12,26 @@ class Auth {
             if (! ctx.session || ! ctx.session.username) {
                 ctx.status = 302;
                 ctx.redirect('/auth/login');
-                return
+                return;
             }
+            await next();
+        }
+    }
+
+    get adminAuth() {
+        return async (ctx: Context, next: Function) => {
+            if (! ctx.session || ! ctx.session.username) {
+                ctx.status = 302;
+                ctx.redirect('/auth/login');
+                return;
+            }
+
+            if (ctx.session.username !== 'admin' && ctx.session.id !== 1) {
+                ctx.status = 302;
+                ctx.redirect('/');
+                return;
+            }
+
             await next();
         }
     }

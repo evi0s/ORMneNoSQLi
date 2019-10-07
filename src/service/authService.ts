@@ -1,17 +1,10 @@
 import { User } from "../model/userModel"
+import { Result } from "../model/resultModel"
 
 
-interface loginResult {
-    id?: number,
-    username?: string,
-    message: string
-}
+interface loginResult extends Result {}
 
-interface registerResult {
-    id?: number,
-    username?: string,
-    message: string
-}
+interface registerResult extends Result {}
 
 async function login(username: string, password: string): Promise<loginResult> {
 
