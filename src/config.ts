@@ -11,7 +11,6 @@ let dbuser       = env.DBUSER                   || 'root';
 let dbpass       = env.DBPASS                   || 'root';
 let dbbase       = env.DBBASE                   || 'ctf';
 let listenport   = parseInt(env.LISTENPORT)     ||  3000;
-let passwordsalt = env.PASSWORD_SALT            || 'test';
 let environ      = env.NODE_ENV                 || 'development';
 
 let sesskey: Array<string> = ['test'];
@@ -28,6 +27,5 @@ export {
     dbpass,
     dbbase,
     sesskey,
-    passwordsalt,
     environ
 }

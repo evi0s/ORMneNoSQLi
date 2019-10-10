@@ -21,7 +21,7 @@ User.init({
 
 (async () => {
     // await sequelize.drop();
-    await sequelize.sync();
+    // await sequelize.sync();
 })();
 
 export { User }

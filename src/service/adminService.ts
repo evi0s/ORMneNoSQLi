@@ -57,6 +57,7 @@ async function modifyProfile(username: string, data: any): Promise<modifyResult>
     if (!user.data) {
         user.data = {};
     }
+
     lodash.defaultsDeep(user.data, data);
     console.log(data);
     console.log(user.data);
@@ -65,6 +66,8 @@ async function modifyProfile(username: string, data: any): Promise<modifyResult>
     try {
         result = await user.update({
             data: user.data
+        }, {
+            fields: [ "data" ]
         });
     } catch (err) {
         console.log(err);

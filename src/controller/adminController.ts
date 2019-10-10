@@ -1,4 +1,4 @@
-import { RouterContext } from "koa-router"
+import { RouterContext } from 'koa-router'
 import {
     queryUser, userResult
 } from "../service/adminService"
@@ -97,6 +97,7 @@ async function modify(ctx: RouterContext) {
 
 async function modifyIndex(ctx: RouterContext) {
     await ctx.render('manage', {
+        username: 'admin',
         isQuery: true,
         data: '{}'
     });

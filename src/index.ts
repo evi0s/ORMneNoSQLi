@@ -24,6 +24,7 @@ app.use(bodyparser());
 app.use(json());
 app.use(helmet());
 app.use(logger());
+//@ts-ignore
 app.use(session(app));
 app.use(views(path.join(__dirname, './views'), {
     extension: 'ejs'
@@ -42,6 +43,6 @@ app.use(adminRouter.allowedMethods());
 app.use(userRouter.routes());
 app.use(userRouter.allowedMethods());
 
-app.listen(config.listenport, () => {
-    console.log(`Application is running on port: ${config.listenport}`);
+app.listen(config.listenport, config.listenaddr, () => {
+    console.log(`Application is running on ${config.listenaddr}: ${config.listenport}`);
 });
