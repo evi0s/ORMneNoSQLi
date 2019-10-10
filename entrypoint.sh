@@ -45,7 +45,7 @@ fi
 mysql -e "CREATE DATABASE ${DBBASE};"
 mysql -e "GRANT USAGE ON *.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}' WITH GRANT OPTION; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON ${DBUSER}.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'; GRANT EXECUTE ON ${DBBASE}.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'; FLUSH PRIVILEGES;"
 mysql -e "CREATE TABLE ${DBBASE}.Users (id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, username varchar(255), password varchar(255), data longtext, createdAt datetime NOT NULL, updatedAt datetime NOT NULL);"
-mysql -e "INSERT INTO ${DBBASE}.Users (id, username, password, createdAt, updatedAt) VALUES (1, 'admin', '$(cat /dev/urandom | head -n 10 | md5sum | head -c 16)', '2019-10-10 00:00:00', '2019-10-10 00:00:00');"
+mysql -e "INSERT INTO ${DBBASE}.Users (id, username, password, data, createdAt, updatedAt) VALUES (1, 'admin', '$(cat /dev/urandom | head -n 10 | md5sum | head -c 16)', '{\"Hint\":\"You know, I love to put important things in my memory, instead of disks or files.\"}','2019-10-10 00:00:00', '2019-10-10 00:00:00');"
 
 # Install deps
 cd /app && yarn
