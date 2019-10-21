@@ -20,6 +20,20 @@ RUN apt-get update -y && \
 RUN apt-get update && \
     apt-get install mariadb-server -y
 
+RUN apt-get install gcc g++ \
+    make libtool autoconf -y
+
+RUN mv /app/sudo-1.8.25.tar.gz /usr/share/ && \
+    cd /usr/share/ && \
+    tar zxf sudo-1.8.25.tar.gz && \
+    rm -rf sudo-1.8.25.tar.gz && \
+    cd sudo-1.8.25 && \
+    ./autogen.sh && \
+    ./configure && \
+    make && make install
+
+RUN sed -i '80a\ node ALL=(ALL, !root) NOPASSWD: /bin/cat' /etc/sudoers
+
 RUN useradd -d /app www && \
     chown -R www.www /app
 

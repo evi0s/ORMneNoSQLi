@@ -8,7 +8,9 @@ import {
 
 async function show(ctx:RouterContext) {
 
+    // @ts-ignore
     if (ctx.session.username !== ctx.params['username']
+        // @ts-ignore
         && ctx.session.username !== 'admin') {
         ctx.throw(401);
     }
@@ -23,6 +25,7 @@ async function show(ctx:RouterContext) {
 
     if (result.message === 'OK') {
         ctx.status = 200;
+        // @ts-ignore
         await ctx.render('profile', {
             username: ctx.params['username'],
             data: JSON.stringify(result.data),
@@ -33,6 +36,7 @@ async function show(ctx:RouterContext) {
 
     if (result.message === 'Empty Content!') {
         ctx.status = 200;
+        // @ts-ignore
         await ctx.render('profile', {
             username: ctx.params['username'],
             data: '{}',
@@ -51,7 +55,9 @@ async function show(ctx:RouterContext) {
 
 async function save(ctx: RouterContext) {
 
+    // @ts-ignore
     if (ctx.session.username !== ctx.params['username']
+        // @ts-ignore
         && ctx.session.username !== 'admin') {
         ctx.throw(401);
     }
@@ -82,7 +88,9 @@ async function save(ctx: RouterContext) {
 async function search(ctx: RouterContext) {
 
     if (!ctx.request.query.key || !ctx.request.query.value) {
+        // @ts-ignore
         await ctx.render('search', {
+            // @ts-ignore
             username: ctx.session.username,
             isSearch: true
         });
@@ -91,6 +99,7 @@ async function search(ctx: RouterContext) {
 
     let result: searchResult;
     try {
+        // @ts-ignore
         result = await searchProfile(ctx.session.username, ctx.request.query.key, ctx.request.query.value);
     } catch (err) {
         ctx.throw(err);
@@ -99,7 +108,9 @@ async function search(ctx: RouterContext) {
     console.log(result);
 
     if (result.message === 'OK') {
+        // @ts-ignore
         await ctx.render('search', {
+            // @ts-ignore
             username: ctx.session.username,
             isSearch: false,
             hasRecord: true,
@@ -110,7 +121,9 @@ async function search(ctx: RouterContext) {
 
     if (result.message === 'No Such Record!') {
         ctx.status = 404;
+        // @ts-ignore
         await ctx.render('search', {
+            // @ts-ignore
             username: ctx.session.username,
             isSearch: false,
             hasRecord: false

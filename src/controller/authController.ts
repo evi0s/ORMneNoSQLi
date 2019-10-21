@@ -23,7 +23,9 @@ async function login(ctx: RouterContext): Promise<any> {
     ctx.body = result;
 
     if (result.message === "Login Success!") {
+        // @ts-ignore
         ctx.session.username = result.username;
+        // @ts-ignore
         ctx.session.id = result.id;
         ctx.status = 200;
         return;
@@ -34,6 +36,7 @@ async function login(ctx: RouterContext): Promise<any> {
 
 async function loginPage(ctx: RouterContext): Promise<any> {
     let action = 'Login';
+    // @ts-ignore
     await ctx.render('passport', {
         action: action,
         isRegister: false
@@ -72,6 +75,7 @@ async function register(ctx: RouterContext): Promise<any> {
 
 async function registerPage(ctx: RouterContext): Promise<any> {
     let action = 'Register';
+    // @ts-ignore
     await ctx.render('passport', {
         action: action,
         isRegister: true
@@ -79,6 +83,7 @@ async function registerPage(ctx: RouterContext): Promise<any> {
 }
 
 async function logout(ctx: RouterContext): Promise<any> {
+    // @ts-ignore
     ctx.session = null;
     ctx.status = 204;
     return;

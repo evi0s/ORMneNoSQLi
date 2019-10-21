@@ -22,6 +22,11 @@ if [ -z "$FLAG" ]; then
     FLAG="d3ctf{Th1s_is_an_3xamp1e_fl114g}"
 fi
 
+# Put the flag into the root dir &
+# Give the permission that only ROOT can read
+echo ${FLAG} > /flag
+chmod 0400 /flag
+
 # Database environment configuration
 ## Starting mysql
 mysqld_safe &
@@ -45,7 +50,7 @@ fi
 mysql -e "CREATE DATABASE ${DBBASE};"
 mysql -e "GRANT USAGE ON *.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}' WITH GRANT OPTION; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP ON ${DBUSER}.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'; GRANT EXECUTE ON ${DBBASE}.* TO '${DBUSER}'@'localhost' IDENTIFIED BY '${DBPASS}'; FLUSH PRIVILEGES;"
 mysql -e "CREATE TABLE ${DBBASE}.Users (id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, username varchar(255), password varchar(255), data longtext, createdAt datetime NOT NULL, updatedAt datetime NOT NULL);"
-mysql -e "INSERT INTO ${DBBASE}.Users (id, username, password, data, createdAt, updatedAt) VALUES (1, 'admin', '$(cat /dev/urandom | head -n 10 | md5sum | head -c 16)', '{\"Hint\":\"You know, I love to put important things in my memory, instead of disks or files.\"}','2019-10-10 00:00:00', '2019-10-10 00:00:00');"
+mysql -e "INSERT INTO ${DBBASE}.Users (id, username, password, data, createdAt, updatedAt) VALUES (1, 'admin', '$(cat /dev/urandom | head -n 10 | md5sum | head -c 16)', '{\"Hint\":\"Root is good, but also dangerous.\"}','2019-10-10 00:00:00', '2019-10-10 00:00:00');"
 
 # Install deps
 cd /app && yarn
@@ -56,7 +61,7 @@ sed -i '412a\       if (key !== "username" && key !== "id" && key !== "password"
     /app/node_modules/sequelize/lib/dialects/abstract/query-generator.js
 
 # Install typescript
-npm i typescript -g
+npm i typescript@3.5.3 -g
 
 # Compile source code
 su - www -c "cd /app && rm -rf dist && mkdir dist && cp -r ./src/views ./dist/views && tsc"
@@ -64,7 +69,7 @@ su - www -c "cd /app && rm -rf dist && mkdir dist && cp -r ./src/views ./dist/vi
 # Ready to start
 while true; do
     echo "Starting..."
-    su - node -c "DBUSER=${DBUSER} DBPASS=${DBPASS} DBBASE=${DBBASE} NODE_ENV=${NODE_ENV} FLAG=${FLAG} LISTENADDR=0.0.0.0 node /app/dist/index.js" &
+    su - node -c "DBUSER=${DBUSER} DBPASS=${DBPASS} DBBASE=${DBBASE} NODE_ENV=${NODE_ENV} LISTENADDR=0.0.0.0 node /app/dist/index.js" &
     sleep ${RESTART}
     echo "Restarting...."
     killall node

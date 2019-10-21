@@ -6,11 +6,13 @@ import { modifyProfile, modifyResult } from "../service/adminService";
 
 
 async function index(ctx: RouterContext) {
+    // @ts-ignore
     await ctx.render('admin')
 }
 
 async function query(ctx: RouterContext) {
     if (!ctx.request.query.username) {
+        // @ts-ignore
         await ctx.render('query', {
             username: 'Admin',
             isQuery: true,
@@ -31,6 +33,7 @@ async function query(ctx: RouterContext) {
     if (result.message === 'OK') {
         ctx.status = 200;
         if (!result.data) {
+            // @ts-ignore
             await ctx.render('query', {
                 username: result.username,
                 id: result.id,
@@ -39,6 +42,7 @@ async function query(ctx: RouterContext) {
                 data: '{}'
             });
         } else {
+            // @ts-ignore
             await ctx.render('query', {
                 username: result.username,
                 id: result.id,
@@ -52,6 +56,7 @@ async function query(ctx: RouterContext) {
 
     if (result.message === 'No Such User!') {
         ctx.status = 200;
+        // @ts-ignore
         await ctx.render('query', {
             username: ctx.request.query.username,
             id: 0,
@@ -96,6 +101,7 @@ async function modify(ctx: RouterContext) {
 }
 
 async function modifyIndex(ctx: RouterContext) {
+    // @ts-ignore
     await ctx.render('manage', {
         username: 'admin',
         isQuery: true,
@@ -116,6 +122,7 @@ async function modifyShow(ctx: RouterContext) {
     if (result.message === 'OK') {
         ctx.status = 200;
         if (!result.data) {
+            // @ts-ignore
             await ctx.render('manage', {
                 username: result.username,
                 id: result.id,
@@ -124,6 +131,7 @@ async function modifyShow(ctx: RouterContext) {
                 data: '{}'
             });
         } else {
+            // @ts-ignore
             await ctx.render('manage', {
                 username: result.username,
                 id: result.id,
@@ -137,6 +145,7 @@ async function modifyShow(ctx: RouterContext) {
 
     if (result.message === 'No Such User!') {
         ctx.status = 200;
+        // @ts-ignore
         await ctx.render('manage', {
             username: ctx.params['username'],
             id: 0,

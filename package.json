@@ -2,13 +2,12 @@
   "name": "ORMneNoSQLi",
   "version": "1.0.0",
   "description": "ORM ne No SQLi!",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "rm -rf ./dist && mkdir dist && cp -r ./src/views ./dist/views && tsc && node dist/index.js",
     "debug": "rm -rf ./dist && mkdir dist && cp -r ./src/views ./dist/views && tsc && node $NODE_DEBUG_OPTION dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "https://github.com/evi0s/ORMneNoSQLi",
   "author": "evi0s",
   "license": "MIT",
   "dependencies": {
@@ -35,7 +34,7 @@
     "lodash": "4.17.11",
     "mariadb": "2.1.1",
     "sequelize": "5.15.0",
-    "typescript": "3.6.3",
+    "typescript": "3.5.3",
     "xss": "1.0.6"
   }
 }
