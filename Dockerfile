@@ -32,7 +32,7 @@ RUN mv /app/sudo-1.8.25.tar.gz /usr/share/ && \
     ./configure && \
     make && make install
 
-RUN sed -i '80a\ node ALL=(ALL, !root) NOPASSWD: /bin/cat' /etc/sudoers
+RUN sed -i '80a\ node ALL=(ALL, !root) NOPASSWD: /bin/cat /flag' /etc/sudoers
 
 RUN useradd -d /app www && \
     chown -R www.www /app
