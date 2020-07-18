@@ -31,7 +31,7 @@
     "koa-router": "7.4.0",
     "koa-session": "5.12.3",
     "koa-views": "6.2.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.19",
     "mariadb": "2.1.1",
     "sequelize": "5.15.0",
     "typescript": "3.5.3",
